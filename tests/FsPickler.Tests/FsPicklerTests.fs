@@ -622,6 +622,11 @@
 
             z.Value |> snd |> Option.map (fun x -> x.Value) |> Option.get |> fst |> should equal 42
 
+        [<Test ; Category("Custom types")>]
+        member __.``6. Custom: pickler factory whilst inheriting unpickleable class`` () =
+            let x = ClassWithPicklerFactoryInheritsNonSerializable(42) |> testRoundtrip
+            x.Value |> should equal 42
+
 
 
 

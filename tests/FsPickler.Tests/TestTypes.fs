@@ -186,6 +186,20 @@
                     |> Pickler.pair Pickler.int
                     |> Pickler.wrap (fun (_,y) -> new ClassWithCombinators(42,y)) (fun c -> c.Value))
 
+        [<AutoSerializable(false)>]
+        type NonSerializable () = class end
+
+        [<CustomPickler; Serializable>]
+        type ClassWithPicklerFactoryInheritsNonSerializable (x : int) =
+            inherit NonSerializable ()
+            member __.Value = x
+
+            static member CreatePickler (resolver : IPicklerResolver) =
+                Pickler.FromPrimitives(
+                    (fun _ _ -> ClassWithPicklerFactoryInheritsNonSerializable(42)),
+                    (fun _ _ _ -> ()),
+                        true, false)
+
         
         let addStackTrace (e : 'exn) =
             let rec dive n =
